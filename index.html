@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StyleShift — Fashion Copy Translator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    color: #f0ece4;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 8px;
+    background: linear-gradient(135deg, #f0ece4, #c9a96e, #f0ece4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .tagline {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: #555;
+    text-transform: uppercase;
+    margin: 6px 0 40px;
+  }
+  .card {
+    width: 100%;
+    max-width: 680px;
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .tone-bar {
+    display: flex;
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .tone-btn {
+    flex: 1;
+    padding: 13px 8px;
+    background: transparent;
+    border: none;
+    color: #444;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tone-btn:hover { color: #c9a96e; }
+  .tone-btn.active {
+    color: #c9a96e;
+    border-bottom: 2px solid #c9a96e;
+    background: #161616;
+  }
+  .input-area { padding: 24px; }
+  .label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    margin-bottom: 12px;
+  }
+  textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #f0ece4;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    resize: none;
+    outline: none;
+  }
+  textarea::placeholder { color: #2a2a2a; }
+  .translate-btn {
+    width: 100%;
+    padding: 17px;
+    background: #c9a96e;
+    border: none;
+    color: #0a0a0a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .translate-btn:hover { background: #dbbe85; }
+  .translate-btn:disabled { background: #222; color: #444; cursor: not-allowed; }
+  .output-area {
+    padding: 24px;
+    border-top: 1px solid #1a1a1a;
+    display: none;
+  }
+  .output-area.show { display: block; }
+  .output-label { color: #c9a96e; }
+  .output-text {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #f0ece4;
+    margin-top: 12px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+    width: 100%;
+    max-width: 680px;
+  }
+  .chip {
+    padding: 8px 16px;
+    border: 1px solid #1e1e1e;
+    font-size: 12px;
+    color: #444;
+    cursor: pointer;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .chip:hover { border-color: #c9a96e; color: #c9a96e; }
+  .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: #c9a96e;
+    border-radius: 50%;
+    margin: 0 3px;
+    animation: blink 1.2s infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%,80%,100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+  .footer {
+    margin-top: 40px;
+    font-size: 11px;
+    color: #2a2a2a;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="logo">StyleShift</div>
+<div class="tagline">Korean × English Fashion Copy Translator</div>
+
+<div class="card">
+  <div class="tone-bar">
+    <button class="tone-btn active" onclick="setTone(this,'Streetwear')">Street</button>
+    <button class="tone-btn" onclick="setTone(this,'Luxury')">Luxury</button>
+    <button class="tone-btn" onclick="setTone(this,'Vintage')">Vintage</button>
+    <button class="tone-btn" onclick="setTone(this,'Y2K')">Y2K</button>
+    <button class="tone-btn" onclick="setTone(this,'Minimalist')">Minimal</button>
+  </div>
+
+  <div class="input-area">
+    <div class="label">한국어 카피 입력</div>
+    <textarea id="inp" rows="4" placeholder="예: 빈티지 무드의 오버핏 티셔츠..."></textarea>
+  </div>
+
+  <button class="translate-btn" id="btn" onclick="translate()">TRANSLATE</button>
+
+  <div class="output-area" id="out">
+    <div class="label output-label">English Fashion Copy</div>
+    <div class="output-text" id="outText"></div>
+  </div>
+</div>
+
+<div class="chips">
+  <button class="chip" onclick="fill(this)">남성 후드 티셔츠</button>
+  <button class="chip" onclick="fill(this)">빈티지 무드 오버핏 티</button>
+  <button class="chip" onclick="fill(this)">미니멀 데일리 자켓</button>
+  <button class="chip" onclick="fill(this)">레트로 와이드 팬츠</button>
+</div>
+
+<div class="footer">POWERED BY CLAUDE API</div>
+
+<script>
+let tone = 'Streetwear';
+const tones = {
+  Streetwear: 'urban edgy streetwear. Words like drip, heat, clean, fresh.',
+  Luxury: 'high-end luxury fashion. Elegant, aspirational, refined.',
+  Vintage: 'nostalgic vintage. Warm, story-driven, timeless.',
+  Y2K: 'playful Y2K aesthetic. Bold, fun, maximalist.',
+  Minimalist: 'Scandinavian minimalist. Clean, precise, understated.'
+};
+
+function setTone(btn, t) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  tone = t;
+}
+
+function fill(btn) {
+  document.getElementById('inp').value = btn.textContent;
+}
+
+async function translate() {
+  const input = document.getElementById('inp').value.trim();
+  if (!input) return;
+
+  const btn = document.getElementById('btn');
+  const out = document.getElementById('out');
+  const outText = document.getElementById('outText');
+
+  btn.disabled = true;
+  btn.textContent = 'TRANSLATING...';
+  out.classList.add('show');
+  outText.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+
+  try {
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: `You are a fashion copywriter. Translate Korean fashion copy to English with ${tone} tone: ${tones[tone]}. 1-3 punchy sentences only. No explanations.`,
+        messages: [{ role: 'user', content: input }]
+      })
+    });
+
+    const data = await res.json();
+    outText.textContent = data.content?.[0]?.text || 'Try again.';
+  } catch(e) {
+    outText.textContent = '오류 발생. 다시 시도해봐.';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'TRANSLATE';
+}
+</script>
+</body>
+</html>
